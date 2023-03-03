@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: oauth2-proxy-render
+    name: quarto-bot
     env: docker
     envVars:
       - key: OPENAI_API_KEY
