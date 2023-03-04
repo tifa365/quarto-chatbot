@@ -76,6 +76,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 message="Sorry, something went wrong. Try again.",
                 type="error",
             )
+            raise e
             await websocket.send_json(resp.dict())
 
 if __name__ == "__main__":
