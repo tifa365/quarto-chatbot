@@ -55,6 +55,7 @@ async def websocket_endpoint(websocket: WebSocket):
             # Construct a response
             start_resp = ChatResponse(sender="bot", message="", type="start")
             await websocket.send_json(start_resp.dict())
+            logging.info(f"start_resp={start_resp.dict()}")
 
             result = await qa_chain.acall(
                 {"question": question, "chat_history": chat_history}
@@ -62,6 +63,8 @@ async def websocket_endpoint(websocket: WebSocket):
             chat_history.append((question, result["answer"]))
 
             end_resp = ChatResponse(sender="bot", message="", type="end")
+            logging.info(f"end_resp={end_resp.dict()}")
+
             await websocket.send_json(end_resp.dict())
         except WebSocketDisconnect:
             logging.info("websocket disconnect")
@@ -74,6 +77,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 type="error",
             )
             await websocket.send_json(resp.dict())
+            raise e
 
 
 if __name__ == "__main__":
