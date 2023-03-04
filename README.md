@@ -1,27 +1,25 @@
-# 🦜️🔗 ChatLangChain
+# Quarto Help Bot
 
-This repo is an implementation of a locally hosted chatbot specifically focused on question answering over the [LangChain documentation](https://langchain.readthedocs.io/en/latest/).
+This repo is an implementation of a locally hosted chatbot specifically focused on question answering over the [Quarto documentation](https://quarto.org).
 Built with [LangChain](https://github.com/hwchase17/langchain/) and [FastAPI](https://fastapi.tiangolo.com/).
 
 The app leverages LangChain's streaming support and async API to update the page in real time for multiple users.
 
 ## ✅ Running locally
 1. Install dependencies: `pip install -r requirements.txt`
-1. Run `ingest.sh` to ingest LangChain docs data into the vectorstore (only needs to be done once).
-   1. You can use other [Document Loaders](https://langchain.readthedocs.io/en/latest/modules/document_loaders.html) to load your own data into the vectorstore.
+1. Install Quarto [per these instructions](https://quarto.org/docs/get-started/).
+1. Clone the [Quarto repo](https://github.com/quarto-dev/quarto-web)
+1. Run the command `quarto render`.  This will generate the file `_site/search.json` locally.  Move that file to the root of this repo.
 1. Run the app: `make start`
-   1. To enable tracing, make sure `langchain-server` is running locally and pass `tracing=True` to `get_chain` in `main.py`. You can find more documentation [here](https://langchain.readthedocs.io/en/latest/tracing.html).
+1. In [templates/index.html](./templates/index.html), change the line of code `var endpoint = "wss://quarto-bot.onrender.com/chat";` to `var endpoint = "ws://localhost:9000/chat` (this is super hacky will fix this later).
 1. Open [localhost:9000](http://localhost:9000) in your browser.
 
 ## 🚀 Important Links
 
-Deployed version (to be updated soon): [chat.langchain.dev](https://chat.langchain.dev)
+Deployed version: [https://quarto-bot.onrender.com/](https://quarto-bot.onrender.com/)
 
-Hugging Face Space (to be updated soon): [huggingface.co/spaces/hwchase17/chat-langchain](https://huggingface.co/spaces/hwchase17/chat-langchain)
+I am using [render](https://render.com/) to deploy the site.  The [render.yaml](./render.yaml) facilitates this deployment.
 
-Blog Posts: 
-* [Initial Launch](https://blog.langchain.dev/langchain-chat/)
-* [Streaming Support](https://blog.langchain.dev/streaming-support-in-langchain/)
 
 ## 📚 Technical description
 
@@ -29,8 +27,8 @@ There are two components: ingestion and question-answering.
 
 Ingestion has the following steps:
 
-1. Pull html from documentation site
-2. Load html with LangChain's [ReadTheDocs Loader](https://langchain.readthedocs.io/en/latest/modules/document_loaders/examples/readthedocs_documentation.html)
+1. Pull search.json from the rendered site
+2. Load the search.json into a vector database (see `startup_event` in `main.py`).
 3. Split documents with LangChain's [TextSplitter](https://langchain.readthedocs.io/en/latest/modules/utils/combine_docs_examples/textsplitter.html)
 4. Create a vectorstore of embeddings, using LangChain's [vectorstore wrapper](https://langchain.readthedocs.io/en/latest/modules/utils/combine_docs_examples/vectorstores.html) (with OpenAI's embeddings and FAISS vectorstore).
 
