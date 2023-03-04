@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Quarto Help Bot</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='/favicon.png') }}">
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <style>
         .chat-body {
             width: 550px;
@@ -53,6 +56,7 @@
     <script>
         var endpoint = "ws://localhost:9000/chat";
         var ws = new WebSocket(endpoint);
+        var converter = new showdown.Converter();
         // Receive message from server word by word. Display the words as they are received.
         ws.onmessage = function (event) {
             var messages = document.getElementById('messages');
@@ -80,11 +84,16 @@
                     var header = document.getElementById('header');
                     header.innerHTML = data.message;
                 } else if (data.type === "end") {
+                    var p = messages.lastChild.lastChild;
+                    p.innerHTML = converter.makeHtml(p.innerHTML)
+                    
                     var header = document.getElementById('header');
                     header.innerHTML = "Ask a question";
                     var button = document.getElementById('send');
                     button.innerHTML = "Send";
                     button.disabled = false;
+                    
+
                 } else if (data.type === "error") {
                     var header = document.getElementById('header');
                     header.innerHTML = "Ask a question";
@@ -127,7 +136,7 @@
     <div class="chat-body card">
         <div class="card-body p-5">
             <h4 class="card-title text-center text-xl font-medium"> Quarto Help Bot </h4>
-            <p class="card-text text-center text-sm" id="header"> Ask a question </p>
+            <p class="card-text text-center text-sm" id="header">Ask a question about <a href="https://quarto.org">Quarto</a>.</p>
             <hr class="border-gray-500 mb-5" style="margin-top: 20px;">
             <div id="messages" class="overflow-auto" style="max-height: 500px;">
             </div>
