@@ -77,10 +77,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 type="error",
             )
             await websocket.send_json(resp.dict())
-            raise e
-
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=9000)
