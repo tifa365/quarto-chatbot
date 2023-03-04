@@ -2,3 +2,11 @@ a {
     color: rgb(85, 186, 219);
     text-decoration: underline;
 }
+
+.grey-text{
+    color: lightgrey;
+}
+
+.footer-text{
+    font-size: 13px;
+}
