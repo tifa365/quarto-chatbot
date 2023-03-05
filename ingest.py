@@ -39,11 +39,7 @@ def ingest_docs():
     documents = text_splitter.split_documents(raw_documents)
     embeddings = OpenAIEmbeddings()
     vectorstore = FAISS.from_documents(documents, embeddings)
-
     return vectorstore
-    # Save vectorstore
-    # with open("vectorstore.pkl", "wb") as f:
-    #     pickle.dump(vectorstore, f)
 
 
 if __name__ == "__main__":
