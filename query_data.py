@@ -58,6 +58,8 @@ def get_chain(
 
     question_gen_llm = OpenAI(
         model_name='gpt-3.5-turbo',
+        max_retries=8,
+        max_tokens=520,
         temperature=0,
         verbose=True,
         callback_manager=question_manager,
