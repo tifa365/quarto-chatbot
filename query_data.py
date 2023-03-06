@@ -65,7 +65,7 @@ def get_chain(
 
     question_gen_llm = OpenAI(
         model_name='gpt-3.5-turbo',
-        max_retries=6,
+        max_retries=15,
         max_tokens=520,
         temperature=0.5,
         verbose=True,
@@ -73,6 +73,7 @@ def get_chain(
     )
     streaming_llm = OpenAI(
         streaming=True,
+        max_retries=15,
         callback_manager=stream_manager,
         verbose=True,
         temperature=0,
