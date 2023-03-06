@@ -91,6 +91,6 @@ def get_chain(
         combine_docs_chain=doc_chain,
         question_generator=question_generator,
         callback_manager=manager,
-        top_k_docs_for_context=8
+        top_k_docs_for_context=10
     )
     return qa
