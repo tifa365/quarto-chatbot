@@ -1,4 +1,7 @@
 """Create a ChatVectorDBChain for question/answering."""
+import os
+os.environ["LANGCHAIN_HANDLER"] = "langchain"
+
 from langchain.callbacks.base import AsyncCallbackManager
 from langchain.callbacks.tracers import LangChainTracer
 from langchain.chains import ChatVectorDBChain
@@ -10,12 +13,11 @@ from langchain.llms import OpenAI
 from langchain.vectorstores.base import VectorStore
 from pydantic import Field
 
-doc_template="""---
+doc_template="""--- document start ---
 href: {href}
 section: {section}
-content:
-{page_content}
----
+content:{page_content}
+--- document end ---
 """
 
 QUARTO_DOC_PROMPT = PromptTemplate(
@@ -27,14 +29,19 @@ prompt_template = """You are an AI assistant for the open source library Quarto.
 You are given the following extracted parts of a long document and a question. Provide a conversational answer with a hyperlink to the documentation.
 You can construct the hyperlink by using the href and section fields in the context and the base url https://quarto.org/.
 You should only use hyperlinks that are explicitly listed as a source in the context. Do NOT make up a hyperlink that is not listed.
+You should only show code examples that are explicitly listed in the documentation.  Do not make up code examples.
 If the question includes a request for code, provide a fenced code block directly from the documentation.
 If you don't know the answer, just say "Hmm, I'm not sure." Don't try to make up an answer.
 If the question is not about Quarto, politely inform them that you are tuned to only answer questions about Quarto.
-Question: {question}
+
+Documents:
 =========
 {context}
 =========
-Answer in Markdown:"""
+
+Question: {question}
+
+Please provide an answer in Markdown format."""
 QA_PROMPT = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
@@ -60,11 +67,12 @@ def get_chain(
         model_name='gpt-3.5-turbo',
         max_retries=8,
         max_tokens=520,
-        temperature=0,
+        temperature=0.5,
         verbose=True,
         callback_manager=question_manager,
     )
     streaming_llm = OpenAI(
+        model_name='gpt-3.5-turbo',
         streaming=True,
         callback_manager=stream_manager,
         verbose=True,
@@ -84,5 +92,6 @@ def get_chain(
         combine_docs_chain=doc_chain,
         question_generator=question_generator,
         callback_manager=manager,
+        top_k_docs_for_context=10
     )
     return qa
