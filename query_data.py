@@ -67,7 +67,7 @@ def get_chain(
         model_name='gpt-3.5-turbo',
         max_retries=6,
         max_tokens=520,
-        temperature=0,
+        temperature=0.5,
         verbose=True,
         callback_manager=question_manager,
     )
