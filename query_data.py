@@ -34,14 +34,14 @@ If the question includes a request for code, provide a fenced code block directl
 If you don't know the answer, just say "Hmm, I'm not sure." Don't try to make up an answer.
 If the question is not about Quarto, politely inform them that you are tuned to only answer questions about Quarto.
 
+Question: {question}
+
 Documents:
 =========
 {context}
 =========
 
-Question: {question}
-
-Please provide an answer in Markdown format."""
+Answer in Markdown:"""
 QA_PROMPT = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
@@ -72,7 +72,6 @@ def get_chain(
         callback_manager=question_manager,
     )
     streaming_llm = OpenAI(
-        model_name='gpt-3.5-turbo',
         streaming=True,
         callback_manager=stream_manager,
         verbose=True,
