@@ -1,6 +1,5 @@
 """Load html from files, clean up, split, ingest into Weaviate."""
-import pickle
-import json
+import json, requests, pickle
 from langchain.docstore.document import Document
 from langchain.document_loaders.base import BaseLoader
 from langchain.embeddings import OpenAIEmbeddings
@@ -12,14 +11,15 @@ from typing import List
 class QuartoLoader(BaseLoader):
     """Load Quarto search.json files."""
 
-    def __init__(self, file_path: str):
-        """Initialize with file path."""
-        self.file_path = file_path
+    def __init__(self, url: str):
+        """Initialize with a url that points to the search.json file."""
+        self.url = url
 
     def load(self) -> List[Document]:
-        """Load json from file path."""
-        with open(self.file_path) as f:
-            index = json.loads(f.read())
+        """Load json from url."""
+        response = requests.get(self.url)
+        content = response.content.decode('utf-8')
+        index = json.loads(content)
         
         docs = []
         for doc in index:
@@ -30,7 +30,7 @@ class QuartoLoader(BaseLoader):
 
 def ingest_docs():
     """Get documents from web pages."""
-    loader = QuartoLoader("search.json")
+    loader = QuartoLoader("https://quarto.org/search.json")
     raw_documents = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
