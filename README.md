@@ -7,9 +7,6 @@ The app leverages LangChain's streaming support and async API to update the page
 
 ## ✅ Running locally
 1. Install dependencies: `pip install -r requirements.txt`
-1. Install Quarto [per these instructions](https://quarto.org/docs/get-started/).
-1. Clone the [Quarto repo](https://github.com/quarto-dev/quarto-web)
-1. Run the command `quarto render`.  This will generate the file `_site/search.json` locally.  Move that file to the root of this repo.
 1. Run the app: `make start`
 1. In [templates/index.html](./templates/index.html), change the line of code `var endpoint = "wss://quarto-bot.onrender.com/chat";` to `var endpoint = "ws://localhost:9000/chat` (this is super hacky will fix this later).
 1. Open [localhost:9000](http://localhost:9000) in your browser.
